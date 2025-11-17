@@ -7,9 +7,18 @@ interface LayoutProps {
 
 export default function NotesLayout({ children, sidebar }: LayoutProps) {
   return (
-    <>
-      {sidebar}
-      {children}
-    </>
+    <div style={{
+      display: "flex",
+      gap: "1rem",
+      alignItems: "flex-start"
+    }}>
+      <aside style={{ width: "250px", flexShrink: 0 }}>
+        {sidebar}
+      </aside>
+
+      <main style={{ flexGrow: 1 }}>
+        {children}
+      </main>
+    </div>
   );
 }

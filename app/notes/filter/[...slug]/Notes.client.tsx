@@ -21,13 +21,23 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 400);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); 
+    }, 400);
+
     return () => clearTimeout(timer);
   }, [search]);
 
   const { data, isLoading, isError } = useQuery<FetchNotesResponse>({
     queryKey: ["notes", page, debouncedSearch, tag],
-    queryFn: () => fetchNotes({ page, perPage: 10, search: debouncedSearch, tag }),
+    queryFn: () =>
+      fetchNotes({
+        page,
+        perPage: 10,
+        search: debouncedSearch,
+        tag,
+      }),
   });
 
   const openModal = () => setModalOpen(true);
@@ -44,7 +54,11 @@ export default function NotesClient({ tag }: NotesClientProps) {
       {data && <NotesList notes={data.notes} />}
 
       {data && data.totalPages > 1 && (
-        <Pagination currentPage={page} pageCount={data.totalPages} onPageChange={setPage} />
+        <Pagination
+          currentPage={page}
+          pageCount={data.totalPages}
+          onPageChange={setPage}
+        />
       )}
 
       {isModalOpen && (
