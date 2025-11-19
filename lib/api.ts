@@ -20,7 +20,7 @@ export interface FetchNotesParams {
   page?: number;
   perPage?: number;
   search?: string;
-  tag?: Note["tag"];
+  tag?: Note["tag"] | "all";
   sortBy?: "created" | "updated";
 }
 
@@ -31,11 +31,17 @@ export interface FetchNotesResponse {
 
 export async function fetchNotes(params: FetchNotesParams = {}): Promise<FetchNotesResponse> {
   const { page = 1, perPage = 10, search, tag, sortBy } = params;
+
   const q = new URLSearchParams();
   q.append("page", String(page));
   q.append("perPage", String(perPage));
+
   if (search) q.append("search", search);
-  if (tag) q.append("tag", tag);
+
+  if (tag && tag !== "all") {
+    q.append("tag", tag);
+  }
+
   if (sortBy) q.append("sortBy", sortBy);
 
   const resp = await client.get<FetchNotesResponse>(`/notes?${q.toString()}`);
