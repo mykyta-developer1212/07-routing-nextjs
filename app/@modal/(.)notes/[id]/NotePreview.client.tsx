@@ -5,6 +5,7 @@ import { fetchNoteById } from "@/lib/api";
 import Modal from "@/app/@modal/Modal";
 import { useRouter } from "next/navigation";
 import type { Note } from "@/types/note";
+import styles from "@/app/notes/[id]/NotePreview.module.css"; 
 
 interface NotePreviewProps {
   id: string;
@@ -33,19 +34,33 @@ export default function NotePreviewClient({ id }: NotePreviewProps) {
     return (
       <Modal onClose={handleClose}>
         <p>Error loading note.</p>
-        <button onClick={handleClose}>Close</button>
+        <button className={styles.backBtn} onClick={handleClose}>
+          Back
+        </button>
       </Modal>
     );
   }
 
   return (
     <Modal onClose={handleClose}>
-      <h2>{data.title}</h2>
-      <p>{data.content}</p>
-      <p>Tag: <b>{data.tag}</b></p>
-      <p>Created: {new Date(data.createdAt).toLocaleString()}</p>
+      <div className={styles.container}>
+        <button className={styles.backBtn} onClick={handleClose}>
+          Back
+        </button>
 
-      <button onClick={handleClose}>Close</button>
+        <div className={styles.item}>
+          <div className={styles.header}>
+            <h2>{data.title}</h2>
+            {data.tag && <span className={styles.tag}>{data.tag}</span>}
+          </div>
+
+          <p className={styles.content}>{data.content}</p>
+
+          <p className={styles.date}>
+            Created: {new Date(data.createdAt).toLocaleString()}
+          </p>
+        </div>
+      </div>
     </Modal>
   );
 }

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"; 
 import type { Note } from "../types/note";
 
 const API_BASE = "https://notehub-public.goit.study/api";
@@ -37,11 +37,7 @@ export async function fetchNotes(params: FetchNotesParams = {}): Promise<FetchNo
   q.append("perPage", String(perPage));
 
   if (search) q.append("search", search);
-
-  if (tag && tag !== "all") {
-    q.append("tag", tag);
-  }
-
+  if (tag && tag !== "all") q.append("tag", tag);
   if (sortBy) q.append("sortBy", sortBy);
 
   const resp = await client.get<FetchNotesResponse>(`/notes?${q.toString()}`);

@@ -1,8 +1,11 @@
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px; 
+  width: 100%;
+  margin: 0 auto;
+}
   
   .formGroup {
     display: flex;
