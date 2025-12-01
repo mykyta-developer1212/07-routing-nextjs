@@ -21,10 +21,15 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
 
+  // Скидання сторінки на 1 відразу при зміні пошуку
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1); 
     }, 400);
 
     return () => clearTimeout(timer);
@@ -44,33 +49,43 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
- return (
-  <div>
-    {data && data.totalPages > 1 && (
-      <Pagination
-        currentPage={page}
-        pageCount={data.totalPages}
-        onPageChange={setPage}
-      />
-    )}
+  return (
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 16px" }}>
+      {data && data.totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          pageCount={data.totalPages}
+          onPageChange={setPage}
+        />
+      )}
 
-    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
-      <SearchBox value={search} onChange={setSearch} />
-      <button onClick={openModal} className={css.button}>
-        Create note
-      </button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "16px",
+        }}
+      >
+        <SearchBox value={search} onChange={handleSearchChange} />
+        <button onClick={openModal} className={css.button}>
+          Create note
+        </button>
+      </div>
+
+      {isLoading && <p>Loading notes...</p>}
+      {isError && <p>Could not fetch notes.</p>}
+
+      {data?.notes?.length ? (
+        <NotesList notes={data.notes} />
+      ) : (
+        !isLoading && <p>No notes found</p>
+      )}
+
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
+          <NoteForm onSuccess={closeModal} onCancel={closeModal} />
+        </Modal>
+      )}
     </div>
-
-    {isLoading && <p>Loading notes...</p>}
-    {isError && <p>Could not fetch notes.</p>}
-
-    {data && <NotesList notes={data.notes} />}
-
-    {isModalOpen && (
-      <Modal onClose={closeModal}>
-        <NoteForm onSuccess={closeModal} onCancel={closeModal} />
-      </Modal>
-    )}
-  </div>
-);
+  );
 }

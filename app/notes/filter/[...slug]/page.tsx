@@ -10,13 +10,20 @@ interface PageProps {
 export default async function Page(props: PageProps) {
   const { slug } = await props.params;
 
-  const tag = slug?.[0] as NoteTag | undefined;
+  const rawTag = slug?.[0];
+  const tag = rawTag === "all" ? undefined : (rawTag as NoteTag);
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ["notes", 1, "", tag],
-    queryFn: () => fetchNotes({ page: 1, search: "", tag, perPage: 10 }),
+    queryFn: () =>
+      fetchNotes({
+        page: 1,
+        perPage: 10,
+        search: "",
+        tag,
+      }),
   });
 
   return (
