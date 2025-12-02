@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import styles from "./Modal.module.css";
 
 interface ModalProps {
   onClose: () => void;
@@ -9,9 +10,10 @@ interface ModalProps {
 
 export default function Modal({ onClose, children }: ModalProps) {
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button onClick={onClose}>Close</button>
+    <div className={styles.overlay}>
+      <div className={styles.content}>
+        <button className={styles.closeBtn} onClick={onClose}>
+        </button>
         {children}
       </div>
     </div>

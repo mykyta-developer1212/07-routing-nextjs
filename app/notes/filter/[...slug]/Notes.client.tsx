@@ -5,9 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import NotesList from "@/components/NoteList/NoteList";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
-import Modal from "@/app/@modal/Modal";
-import NoteForm from "@/components/NoteForm/NoteForm";
 import css from "@/components/NoteList/NoteList.module.css";
+import Link from "next/link";
 import { fetchNotes, FetchNotesResponse } from "@/lib/api";
 import type { NoteTag } from "@/types/note";
 
@@ -19,9 +18,7 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false);
 
-  // Скидання сторінки на 1 відразу при зміні пошуку
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
@@ -46,9 +43,6 @@ export default function NotesClient({ tag }: NotesClientProps) {
       }),
   });
 
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
-
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 16px" }}>
       {data && data.totalPages > 1 && (
@@ -67,9 +61,11 @@ export default function NotesClient({ tag }: NotesClientProps) {
         }}
       >
         <SearchBox value={search} onChange={handleSearchChange} />
-        <button onClick={openModal} className={css.button}>
+
+        {/* URL-based modal route */}
+        <Link href="/notes/create" className={css.button}>
           Create note
-        </button>
+        </Link>
       </div>
 
       {isLoading && <p>Loading notes...</p>}
@@ -79,12 +75,6 @@ export default function NotesClient({ tag }: NotesClientProps) {
         <NotesList notes={data.notes} />
       ) : (
         !isLoading && <p>No notes found</p>
-      )}
-
-      {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <NoteForm onSuccess={closeModal} onCancel={closeModal} />
-        </Modal>
       )}
     </div>
   );
