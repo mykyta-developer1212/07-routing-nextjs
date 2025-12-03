@@ -10,6 +10,7 @@ import NotePreviewClient from "@/app/@modal/(.)notes/[id]/NotePreview.client";
 import NoteCreateClient from "@/app/@modal/(.)notes/create/NoteCreate.client";
 import { fetchNotes, deleteNote, FetchNotesResponse } from "@/lib/api";
 import type { NoteTag } from "@/types/note";
+import noteListCss from "@/components/NoteList/NoteList.module.css";
 
 interface NotesClientProps {
   tag?: NoteTag;
@@ -62,7 +63,10 @@ export default function NotesClient({ tag }: NotesClientProps) {
 
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
         <SearchBox value={search} onChange={setSearch} />
-        <button className="btn-create" onClick={openCreateModal}>Create note</button>
+
+        <button className={noteListCss.button} onClick={openCreateModal}>
+          Create note
+        </button>
       </div>
 
       {isError && <p>Could not fetch notes.</p>}
