@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import NotesList from "@/components/NoteList/NoteList";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
 import Modal from "@/app/@modal/Modal";
 import NotePreviewClient from "@/app/@modal/(.)notes/[id]/NotePreview.client";
 import NoteCreateClient from "@/app/@modal/(.)notes/create/NoteCreate.client";
-import { fetchNotes, FetchNotesResponse } from "@/lib/api";
+import { fetchNotes, deleteNote, FetchNotesResponse } from "@/lib/api";
 import type { NoteTag } from "@/types/note";
-import css from "@/components/NoteList/NoteList.module.css";
 
 interface NotesClientProps {
   tag?: NoteTag;
@@ -21,6 +20,8 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedNoteId, setSelectedNoteId] = useState<string | "create" | null>(null);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 400);
@@ -36,6 +37,13 @@ export default function NotesClient({ tag }: NotesClientProps) {
         search: debouncedSearch,
         tag,
       }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteNote(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
   });
 
   const openNoteModal = (noteId: string) => setSelectedNoteId(noteId);
@@ -54,15 +62,17 @@ export default function NotesClient({ tag }: NotesClientProps) {
 
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
         <SearchBox value={search} onChange={setSearch} />
-        <button className={css.button} onClick={openCreateModal}>
-          Create note
-        </button>
+        <button className="btn-create" onClick={openCreateModal}>Create note</button>
       </div>
 
       {isError && <p>Could not fetch notes.</p>}
 
       {data?.notes?.length ? (
-        <NotesList notes={data.notes} onViewNote={openNoteModal} />
+        <NotesList
+          notes={data.notes}
+          onViewNote={openNoteModal}
+          onDelete={(id) => deleteMutation.mutate(id)}
+        />
       ) : (
         <p>No notes found</p>
       )}

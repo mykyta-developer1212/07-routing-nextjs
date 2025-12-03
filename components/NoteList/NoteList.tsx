@@ -20,12 +20,8 @@ export default function NoteList({ notes, onViewNote, onDelete }: NoteListProps)
           <p className={css.content}>{note.content}</p>
           <div className={css.footer}>
             <span className={css.tag}>{note.tag}</span>
-            <button className={css.link} onClick={() => onViewNote?.(note.id)}>
-              View details
-            </button>
-            <button className={css.button} onClick={() => onDelete?.(note.id)}>
-              Delete
-            </button>
+            <button className={css.link} onClick={() => onViewNote?.(note.id)}>View details</button>
+            <button className={css.button} onClick={() => onDelete?.(note.id)}>Delete</button>
           </div>
         </li>
       ))}
