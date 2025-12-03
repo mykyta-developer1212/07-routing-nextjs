@@ -1,17 +1,11 @@
 "use client";
 
-import Modal from "@/app/@modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
-import { useRouter } from "next/navigation";
 
-export default function NoteCreateClient() {
-  const router = useRouter();
+interface NoteCreateProps {
+  onClose: () => void;
+}
 
-  const handleClose = () => router.back();
-
-  return (
-    <Modal onClose={handleClose}>
-      <NoteForm onSuccess={handleClose} onCancel={handleClose} />
-    </Modal>
-  );
+export default function NoteCreateClient({ onClose }: NoteCreateProps) {
+  return <NoteForm onSuccess={onClose} onCancel={onClose} />;
 }
