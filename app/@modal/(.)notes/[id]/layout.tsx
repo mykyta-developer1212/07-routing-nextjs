@@ -3,12 +3,11 @@ import NotePreviewClient from "./NotePreview.client";
 
 interface NotesLayoutProps {
   children: ReactNode;
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function NotesLayout({ children, params }: NotesLayoutProps) {
-
-  const id = params.id;
+export default async function NotesLayout({ children, params }: NotesLayoutProps) {
+  const { id } = await params;
 
   return (
     <>
