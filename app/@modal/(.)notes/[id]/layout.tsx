@@ -1,15 +1,14 @@
 import { ReactNode } from "react";
-import { usePathname } from "next/navigation";
 import NotePreviewClient from "./NotePreview.client";
 
-interface ModalLayoutProps {
+interface NotesLayoutProps {
   children: ReactNode;
+  params: { id: string };
 }
 
-export default function ModalLayout({ children }: ModalLayoutProps) {
-  const pathname = usePathname();
+export default function NotesLayout({ children, params }: NotesLayoutProps) {
 
-  const id = pathname.split("/").pop();
+  const id = params.id;
 
   return (
     <>
