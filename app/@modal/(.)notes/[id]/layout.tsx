@@ -1,26 +1,20 @@
-"use client";
-
 import { ReactNode } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import NotePreviewClient from "./NotePreview.client";
 
-interface NotesLayoutProps {
+interface ModalLayoutProps {
   children: ReactNode;
 }
 
-export default function NotesLayout({ children }: NotesLayoutProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id"); 
+export default function ModalLayout({ children }: ModalLayoutProps) {
+  const pathname = usePathname();
 
-  const closeModal = () => {
-    router.back();
-  };
+  const id = pathname.split("/").pop();
 
   return (
     <>
       {children}
-      {id && <NotePreviewClient noteId={id} onClose={closeModal} />}
+      {id && <NotePreviewClient noteId={id} />}
     </>
   );
 }
