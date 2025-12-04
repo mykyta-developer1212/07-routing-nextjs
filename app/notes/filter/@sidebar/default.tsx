@@ -1,10 +1,21 @@
-"use client";
-
-import SidebarNotes from "./SidebarNotes";
-import type { NoteTag } from "@/types/note";
+import Link from "next/link";
+import styles from "./SidebarNotes.module.css";
 
 export default function SidebarDefault() {
-  const tags: NoteTag[] = ["Work", "Personal", "Todo", "Meeting", "Shopping"];
+  const tags = ["all", "Work", "Personal", "Todo", "Meeting", "Shopping"];
 
-  return <SidebarNotes tags={tags} />;
+  return (
+    <ul className={styles.menuList}>
+      {tags.map((tag) => (
+        <li key={tag} className={styles.menuItem}>
+          <Link
+            href={`/notes/filter/${tag}`}
+            className={styles.menuLink}
+          >
+            {tag}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 }
