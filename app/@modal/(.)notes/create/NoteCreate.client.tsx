@@ -7,5 +7,5 @@ interface NoteCreateProps {
 }
 
 export default function NoteCreateClient({ onClose }: NoteCreateProps) {
-  return <NoteForm onSuccess={onClose} onCancel={onClose} />;
+  return <NoteForm onSuccess={onClose} onClose={onClose} />;
 }
