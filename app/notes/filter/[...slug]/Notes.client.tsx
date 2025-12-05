@@ -7,7 +7,7 @@ import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
 import Modal from "@/app/@modal/Modal";
 import NotePreviewClient from "@/app/@modal/(.)notes/[id]/NotePreview.client";
-import NoteCreateClient from "@/app/@modal/(.)notes/create/NoteCreate.client";
+import NoteForm from "@/components/NoteForm/NoteForm"; 
 import { fetchNotes, deleteNote, FetchNotesResponse } from "@/lib/api";
 import type { NoteTag } from "@/types/note";
 import css from "@/components/NoteList/NoteList.module.css";
@@ -26,7 +26,7 @@ export default function NotesClient({ tag }: NotesClientProps) {
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
-    setPage(1); 
+    setPage(1);
   };
 
   useEffect(() => {
@@ -58,15 +58,14 @@ export default function NotesClient({ tag }: NotesClientProps) {
 
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 16px" }}>
-      {data && data.totalPages > 1 && (
-        <Pagination
-          currentPage={page}
-          pageCount={data.totalPages}
-          onPageChange={setPage}
-        />
-      )}
-
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
+      
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "16px",
+        }}
+      >
         <SearchBox value={search} onChange={handleSearchChange} />
         <button className={css.button} onClick={openCreateModal}>
           Create note
@@ -85,15 +84,23 @@ export default function NotesClient({ tag }: NotesClientProps) {
         <p>No notes found</p>
       )}
 
+      {data && data.totalPages > 1 && (
+        <Pagination
+          currentPage={page}
+          pageCount={data.totalPages}
+          onPageChange={setPage}
+        />
+      )}
+
       {selectedNoteId && selectedNoteId !== "create" && (
         <Modal onClose={closeNoteModal}>
-          <NotePreviewClient noteId={selectedNoteId} />
+          <NotePreviewClient noteId={selectedNoteId} onClose={closeNoteModal} />
         </Modal>
       )}
 
       {selectedNoteId === "create" && (
         <Modal onClose={closeNoteModal}>
-          <NoteCreateClient onClose={closeNoteModal} />
+          <NoteForm onClose={closeNoteModal} />
         </Modal>
       )}
     </div>

@@ -10,10 +10,16 @@ import styles from "./NoteForm.module.css";
 
 export interface NoteFormProps {
   onSuccess?: () => void;
-  onCancel?: () => void;
+  onClose?: () => void;   // ← ДОДАНО СЮДИ
 }
 
-const TAGS: CreateNotePayload["tag"][] = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
+const TAGS: CreateNotePayload["tag"][] = [
+  "Todo",
+  "Work",
+  "Personal",
+  "Meeting",
+  "Shopping"
+];
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -27,7 +33,7 @@ const validationSchema = Yup.object({
     .required("Tag is required"),
 });
 
-export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
+export default function NoteForm({ onSuccess, onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Note, Error, CreateNotePayload>({
@@ -35,6 +41,7 @@ export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       onSuccess?.();
+      onClose?.();            
     },
   });
 
@@ -44,7 +51,10 @@ export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
     tag: "Todo",
   };
 
-  const handleSubmit = (values: CreateNotePayload, helpers: FormikHelpers<CreateNotePayload>) => {
+  const handleSubmit = (
+    values: CreateNotePayload,
+    helpers: FormikHelpers<CreateNotePayload>
+  ) => {
     mutation.mutate(values, {
       onSettled: () => {
         helpers.setSubmitting(false);
@@ -54,7 +64,11 @@ export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
   };
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
       {({ isSubmitting }) => (
         <Form className={styles.form}>
           <div className={styles.formGroup}>
@@ -65,7 +79,13 @@ export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
 
           <div className={styles.formGroup}>
             <label htmlFor="content">Content</label>
-            <Field as="textarea" id="content" name="content" rows={6} className={styles.textarea} />
+            <Field
+              as="textarea"
+              id="content"
+              name="content"
+              rows={6}
+              className={styles.textarea}
+            />
             <ErrorMessage name="content" component="span" className={styles.error} />
           </div>
 
@@ -82,10 +102,19 @@ export default function NoteForm({ onSuccess, onCancel }: NoteFormProps) {
           </div>
 
           <div className={styles.actions}>
-            <button type="button" onClick={onCancel} className={styles.cancelButton}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelButton}
+            >
               Cancel
             </button>
-            <button type="submit" className={styles.submitButton} disabled={isSubmitting || mutation.isPending}>
+
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isSubmitting || mutation.isPending}
+            >
               Create note
             </button>
           </div>
